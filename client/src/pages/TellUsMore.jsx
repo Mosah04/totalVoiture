@@ -109,7 +109,7 @@ const TellUsMore = () => {
         console.error(err);
       });
     if (missingInfos.hasOwnProperty("email"))
-      updateEmail(currentUser, data.email)
+      updateEmail(auth.currentUser, data.email)
         .then(() => {
           toast.success("Informations ajoutées avec succès!");
         })
@@ -121,7 +121,6 @@ const TellUsMore = () => {
           setIsLoading(false);
           const date = Date.now();
           while (Date.now() - date < 5000) {}
-          console.log("AAAAAAAAAAAA");
           navigate("/");
         });
   };
