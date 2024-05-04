@@ -105,6 +105,7 @@ const TellUsMore = () => {
       })
       .catch((err) => {
         toast.error("Oups, nous avons rencontré une erreur!");
+        console.error(err);
       })
       .finally(() => {
         setIsLoading(false);
