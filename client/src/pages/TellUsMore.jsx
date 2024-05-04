@@ -104,21 +104,24 @@ const TellUsMore = () => {
           setIsLoading(false);
         }
       })
-      .catch(() => {
+      .catch((err) => {
         toast.error("Oups, nous avons rencontré un problème!");
+        console.error(err);
       });
     if (missingInfos.hasOwnProperty("email"))
       updateEmail(currentUser, data.email)
         .then(() => {
           toast.success("Informations ajoutées avec succès!");
         })
-        .catch(() => {
+        .catch((err) => {
           toast.error("Oups, nous avons rencontré un problème!");
+          console.error(err);
         })
         .finally(() => {
           setIsLoading(false);
           const date = Date.now();
           while (Date.now() - date < 5000) {}
+          console.log("AAAAAAAAAAAA");
           navigate("/");
         });
   };
