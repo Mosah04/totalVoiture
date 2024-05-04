@@ -5,9 +5,9 @@ import MailSvg from "../assets/mailSvg";
 import { FaPhoneAlt } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/authContext";
-import { updateProfile } from "firebase/auth";
 import { auth } from "../config/firebase-config";
 import toast, { Toaster } from "react-hot-toast";
+import { doUpdateUser } from "../config/auth";
 
 const TellUsMore = () => {
   const { currentUser } = useAuth();
@@ -23,6 +23,7 @@ const TellUsMore = () => {
   console.log(missingInfos);
   console.log("USER", currentUser);
   const [isLoading, setIsLoading] = useState(false);
+  const [infosFilled, setInfosFilled] = useState(false);
 
   const navigate = useNavigate();
 
@@ -97,15 +98,17 @@ const TellUsMore = () => {
       data.phoneNumber = form.phoneNumber.trim();
     }
 
-    updateProfile(auth.currentUser, data)
+    doUpdateUser(auth.currentUser.uid, data)
       .then(() => {
         toast.success("Informations ajoutées avec succès!");
-        navigate("/");
+        setInfosFilled(true);
       })
       .finally(() => {
         setIsLoading(false);
       });
   };
+
+  if (infosFilled) navigate("/");
 
   return (
     <div className="bg-background flex flex-col w-screen min-h-screen items-center justify-center font-dm-sans text-font-normal">
