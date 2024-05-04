@@ -103,6 +103,9 @@ const TellUsMore = () => {
         toast.success("Informations ajoutées avec succès!");
         setInfosFilled(true);
       })
+      .catch((err) => {
+        toast.error("Oups, nous avons rencontré une erreur!");
+      })
       .finally(() => {
         setIsLoading(false);
       });
