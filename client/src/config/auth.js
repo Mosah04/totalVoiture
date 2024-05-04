@@ -3,7 +3,6 @@ import { auth } from "./firebase-config";
 import {
   GoogleAuthProvider,
   createUserWithEmailAndPassword,
-  getAuth,
   sendEmailVerification,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
@@ -36,7 +35,7 @@ export const doSignInWithGoogle = async () => {
 };
 
 export const doUpdateUser = async (uid, data) => {
-  return getAuth(auth).updateCurrentUser(uid, data);
+  return auth.updateCurrentUser(uid, data);
 };
 
 export const doSignOut = () => {
