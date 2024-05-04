@@ -5,7 +5,7 @@ import MailSvg from "../assets/mailSvg";
 import { FaPhoneAlt } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/authContext";
-import { auth } from "../config/firebase-config";
+// import { auth } from "../config/firebase-config";
 import toast, { Toaster } from "react-hot-toast";
 import { doUpdateUser } from "../config/auth";
 
@@ -98,7 +98,7 @@ const TellUsMore = () => {
       data.phoneNumber = form.phoneNumber.trim();
     }
 
-    doUpdateUser(auth.currentUser.uid, data)
+    doUpdateUser(currentUser.uid, data)
       .then(() => {
         toast.success("Informations ajoutées avec succès!");
         setInfosFilled(true);
