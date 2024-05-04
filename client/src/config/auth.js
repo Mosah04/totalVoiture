@@ -34,10 +34,6 @@ export const doSignInWithGoogle = async () => {
   return result;
 };
 
-export const doUpdateUser = async (uid, data) => {
-  return auth.updateCurrentUser(uid, data);
-};
-
 export const doSignOut = () => {
   return auth.signOut();
 };

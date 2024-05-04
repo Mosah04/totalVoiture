@@ -5,9 +5,9 @@ import MailSvg from "../assets/mailSvg";
 import { FaPhoneAlt } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/authContext";
-// import { auth } from "../config/firebase-config";
+import { updateEmail, updateProfile } from "firebase/auth";
+import { auth } from "../config/firebase-config";
 import toast, { Toaster } from "react-hot-toast";
-import { doUpdateUser } from "../config/auth";
 
 const TellUsMore = () => {
   const { currentUser } = useAuth();
@@ -23,7 +23,6 @@ const TellUsMore = () => {
   console.log(missingInfos);
   console.log("USER", currentUser);
   const [isLoading, setIsLoading] = useState(false);
-  const [infosFilled, setInfosFilled] = useState(false);
 
   const navigate = useNavigate();
 
@@ -98,21 +97,31 @@ const TellUsMore = () => {
       data.phoneNumber = form.phoneNumber.trim();
     }
 
-    doUpdateUser(currentUser.uid, data)
+    updateProfile(auth.currentUser, data)
       .then(() => {
-        toast.success("Informations ajoutées avec succès!");
-        setInfosFilled(true);
+        if (!missingInfos.hasOwnProperty("email")) {
+          toast.success("Informations ajoutées avec succès!");
+          setIsLoading(false);
+        }
       })
-      .catch((err) => {
-        toast.error("Oups, nous avons rencontré une erreur!");
-        console.error(err);
-      })
-      .finally(() => {
-        setIsLoading(false);
+      .catch(() => {
+        toast.error("Oups, nous avons rencontré un problème!");
       });
+    if (missingInfos.hasOwnProperty("email"))
+      updateEmail(currentUser, data.email)
+        .then(() => {
+          toast.success("Informations ajoutées avec succès!");
+        })
+        .catch(() => {
+          toast.error("Oups, nous avons rencontré un problème!");
+        })
+        .finally(() => {
+          setIsLoading(false);
+          const date = Date.now();
+          while (Date.now() - date < 5000) {}
+          navigate("/");
+        });
   };
-
-  if (infosFilled) navigate("/");
 
   return (
     <div className="bg-background flex flex-col w-screen min-h-screen items-center justify-center font-dm-sans text-font-normal">
