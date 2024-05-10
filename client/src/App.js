@@ -13,14 +13,30 @@ const App = () => {
 
   if (!currentUser) return <Navigate to={"/login"} replace={true} />;
 
-  const [infosAreCompleted, missingInfos] = userInfosCompleted(currentUser);
+  userInfosCompleted(currentUser)
+    .then(([infosAreCompleted, missingInfos]) => {
+      if (!infosAreCompleted)
+        navigate("/tellUsMore", { state: missingInfos, replace: true });
+    })
+    .catch((error) => {
+      console.error(
+        "Une erreur s'est produite lors de la complétion des informations utilisateur :",
+        error
+      );
+    });
 
-  if (!infosAreCompleted)
-    return <Navigate to={"/tellUsMore"} state={missingInfos} replace={true} />;
+  // console.log(currentUser);
   return (
     <main className="flex bg-background min-w-screen min-h-screen font-dm-sans text-font-normal">
       <SideBar
-        signOutFunc={() => logOut().then(() => navigate("/login"))}
+        signOutFunc={() => {
+          // setLoggedIn(false);
+          try {
+            logOut().then(() => navigate("/login"));
+          } catch (error) {
+            console.log(error);
+          }
+        }}
         userName={currentUser.displayName}
         userAvatarURL={currentUser.photoURL}
       />

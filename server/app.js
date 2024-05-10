@@ -14,10 +14,13 @@ import reclamationsRouter from "./routes/reclamations.js";
 import transactionsRouter from "./routes/transactions.js";
 import annoncesRouter from "./routes/annonces.js";
 import assurancesRouter from "./routes/assurances.js";
+import usersRouter from "./routes/users.js";
+import rolesRouter from "./routes/roles.js";
 
 import middleware from "./middleware/index.js";
 
 import mongoose from "mongoose";
+import cors from "cors";
 
 import dotenv from "dotenv";
 
@@ -32,20 +35,31 @@ const app = express();
 mongoose.set("strictQuery", false);
 
 // Define the database URL to connect to.
-const mongoDB = `mongodb+srv://${DATABASE_USERNAME}:${DATABASE_PASSWORD}${DATABASE_URL}`;
+const mongoDB = `mongodb+srv://${DATABASE_USERNAME}:${DATABASE_PASSWORD}${DATABASE_URL}?retryWrites=true&w=majority&appName=Cluster0`;
 
-await mongoose.connect(mongoDB);
+// await mongoose.connect(mongoDB);
 
 // Wait for database to connect, logging an error if there is a problem
-main().catch((err) => console.log(err));
+const clientOptions = {
+  serverApi: { version: "1", strict: true, deprecationErrors: true },
+};
+main()
+  .then(() =>
+    console.log(
+      "Pinged your deployment. You successfully connected to MongoDB!"
+    )
+  )
+  .catch((err) => console.log(err));
 async function main() {
-  await mongoose.connect(mongoDB);
+  await mongoose.connect(mongoDB, clientOptions);
+  await mongoose.connection.db.admin().command({ ping: 1 });
 }
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
+app.use(cors());
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -60,6 +74,8 @@ app.use("/demandes", demandesRouter);
 app.use("/devis", devisRouter);
 app.use("/reclamations", reclamationsRouter);
 app.use("/transactions", transactionsRouter);
+app.use("/users", usersRouter);
+app.use("/roles", rolesRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

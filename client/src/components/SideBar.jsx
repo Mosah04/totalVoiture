@@ -196,7 +196,7 @@ const SideBar = ({ signOutFunc, userName, userAvatarURL }) => {
                   {/* <span>Role</span> */}
                 </div>
                 <button
-                  onClick={() => signOutFunc().then(() => navigate("/login"))}
+                  onClick={() => signOutFunc()}
                   className="text-white flex mb-[1%]"
                   type="button"
                 >
