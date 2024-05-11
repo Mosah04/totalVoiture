@@ -4,6 +4,7 @@ import { useAuth } from "./contexts/authContext";
 import SideBar from "./components/SideBar";
 import { useLayoutContext } from "./contexts/layoutContext";
 import NavBar from "./components/NavBar";
+import { useEffect } from "react";
 
 const App = () => {
   const { sideVisible } = useLayoutContext();
@@ -11,19 +12,22 @@ const App = () => {
 
   const navigate = useNavigate();
 
-  if (!currentUser) return <Navigate to={"/login"} replace={true} />;
+  useEffect(() => {
+    if (!currentUser) return;
+    userInfosCompleted(currentUser)
+      .then(([infosAreCompleted, missingInfos]) => {
+        if (!infosAreCompleted)
+          navigate("/tellUsMore", { state: missingInfos, replace: true });
+      })
+      .catch((error) => {
+        console.error(
+          "Une erreur s'est produite lors de la complétion des informations utilisateur :",
+          error
+        );
+      });
+  }, []);
 
-  userInfosCompleted(currentUser)
-    .then(([infosAreCompleted, missingInfos]) => {
-      if (!infosAreCompleted)
-        navigate("/tellUsMore", { state: missingInfos, replace: true });
-    })
-    .catch((error) => {
-      console.error(
-        "Une erreur s'est produite lors de la complétion des informations utilisateur :",
-        error
-      );
-    });
+  if (!currentUser) return <Navigate to={"/login"} replace={true} />;
 
   // console.log(currentUser);
   return (

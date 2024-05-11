@@ -36,7 +36,7 @@ export const userInfosCompleted = async ({
   if (!phoneNumber) remainingFields.phoneNumber = "";
 
   return [
-    Object.keys(remainingFields).length === 0 && Boolean(user.roles?.length),
+    Object.keys(remainingFields).length === 0 && Boolean(user.rolesId?.length),
     remainingFields,
   ];
 };
