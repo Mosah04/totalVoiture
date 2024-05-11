@@ -8,60 +8,61 @@ import Main from "../Main.js";
 import Annonces from "../pages/Annonces.jsx";
 import Messages from "../pages/Messages.jsx";
 import AnnonceCreate from "../pages/annonces/create.jsx";
+import Settings from "../pages/Settings.jsx";
 
 const router = createBrowserRouter([
   {
-    path: "/*",
+        path: "/*",
     element: <Main />,
     children: [
       {
-        path: "annonces/*",
+                path: "annonces/*",
         element: <Annonces />,
         children: [
           {
-            path: "create",
+                    path: "create",
             element: <AnnonceCreate />,
           },
         ],
-      },
-      {
-        path: "assurances",
+            },
+            {
+                path: "assurances",
         element: <div> Assurances</div>,
-      },
-      {
-        path: "importations",
+            },
+            {
+                path: "importations",
         element: <div> Importations</div>,
-      },
-      {
-        path: "messages",
+            },
+            {
+                path: "messages",
         element: <Messages />,
-      },
-      {
-        path: "users",
+            },
+            {
+                path: "users",
         element: <div> Utilisateurs</div>,
-      },
-      {
-        path: "settings",
-        element: <div> Paramètres</div>,
-      },
-    ],
-  },
-  {
-    path: "/login",
+            },
+            {
+                path: "settings",
+        element: <Settings/>,
+            },
+        ],
+    },
+    {
+        path: "/login",
     element: <Auth />,
-  },
-  {
-    path: "/signup",
+    },
+    {
+        path: "/signup",
     element: <Auth />,
-  },
-  {
-    path: "/tellUsMore",
+    },
+    {
+        path: "/tellUsMore",
     element: <TellUsMore />,
-  },
-  {
-    path: "/verify-otp",
+    },
+    {
+        path: "/verify-otp",
     element: <VerifyOtp />,
-  },
+    },
 ]);
 
 export default router;
