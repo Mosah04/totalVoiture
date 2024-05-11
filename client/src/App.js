@@ -4,6 +4,7 @@ import { useAuth } from "./contexts/authContext";
 import SideBar from "./components/SideBar";
 import { useLayoutContext } from "./contexts/layoutContext";
 import NavBar from "./components/NavBar";
+import { useEffect } from "react";
 
 const App = () => {
   const { sideVisible } = useLayoutContext();
@@ -11,16 +12,35 @@ const App = () => {
 
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (!currentUser) return;
+    userInfosCompleted(currentUser)
+      .then(([infosAreCompleted, missingInfos]) => {
+        if (!infosAreCompleted)
+          navigate("/tellUsMore", { state: missingInfos, replace: true });
+      })
+      .catch((error) => {
+        console.error(
+          "Une erreur s'est produite lors de la complétion des informations utilisateur :",
+          error
+        );
+      });
+  }, []);
+
   if (!currentUser) return <Navigate to={"/login"} replace={true} />;
 
-  const [infosAreCompleted, missingInfos] = userInfosCompleted(currentUser);
-
-  if (!infosAreCompleted)
-    return <Navigate to={"/tellUsMore"} state={missingInfos} replace={true} />;
+  // console.log(currentUser);
   return (
     <main className="flex bg-background min-w-screen min-h-screen font-dm-sans text-font-normal">
       <SideBar
-        signOutFunc={() => logOut().then(() => navigate("/login"))}
+        signOutFunc={() => {
+          // setLoggedIn(false);
+          try {
+            logOut().then(() => navigate("/login"));
+          } catch (error) {
+            console.log(error);
+          }
+        }}
         userName={currentUser.displayName}
         userAvatarURL={currentUser.photoURL}
       />

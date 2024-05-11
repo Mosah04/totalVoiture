@@ -24,7 +24,7 @@ export function AuthProvider({ children }) {
     if (user) {
       setCurrentUser({ ...user });
       setLoggedIn(true);
-      cookies.set("totalUser", user, { path: "/", sameSite: true });
+      cookies.set("totalUser", { ...user }, { path: "/", sameSite: true });
     } else {
       setCurrentUser(cookies.get("totalUser") || null);
       setLoggedIn(Boolean(currentUser));

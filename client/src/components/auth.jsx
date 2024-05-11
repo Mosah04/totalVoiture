@@ -93,18 +93,22 @@ function Auth() {
             ...errors,
             general: message,
           });
+          console.log(e);
         }
       );
 
-    if (page === "signup" && authMethod === "email")
-      await doCreateUserWithEmailAndPassword(form.email, form.password).catch(
-        () => {
-          setErrors({
-            ...errors,
-            general: "Ouch! Quelque chose s'est mal passé, veuillez réessayer!",
-          });
-        }
-      );
+    if (page === "signup" && authMethod === "email") {
+      const userCreated = await doCreateUserWithEmailAndPassword(
+        form.email,
+        form.password
+      ).catch(() => {
+        setErrors({
+          ...errors,
+          general: "Ouch! Quelque chose s'est mal passé, veuillez réessayer!",
+        });
+      });
+      console.log("userCreated", userCreated);
+    }
 
     if (authMethod === "phone") {
       setIsAuthenticating(true);

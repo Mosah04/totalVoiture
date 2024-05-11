@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import SuperInput from "../components/SuperInput";
 import { ImSpinner9 } from "react-icons/im";
 import MailSvg from "../assets/mailSvg";
@@ -8,6 +8,7 @@ import { useAuth } from "../contexts/authContext";
 import { updateEmail, updateProfile } from "firebase/auth";
 import { auth } from "../config/firebase-config";
 import toast, { Toaster } from "react-hot-toast";
+import { createUser, getRoles } from "../config/auth.js";
 
 const TellUsMore = () => {
   const { currentUser } = useAuth();
@@ -23,8 +24,34 @@ const TellUsMore = () => {
   console.log(missingInfos);
   console.log("USER", currentUser);
   const [isLoading, setIsLoading] = useState(false);
+  const [roles, setRoles] = useState(null);
+  const [selectedRole, setSelectedRole] = useState([]);
+
+  const handleRadioChange = (event) => {
+    const role = event.target.value;
+    const roleToSet = role.split(",");
+    setSelectedRole(() => roleToSet);
+    console.log(role, "role", role.split(","));
+    console.log(selectedRole);
+  };
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const doGetRoles = async () => {
+      await getRoles(currentUser?.stsTokenManager.accessToken)
+        .then((response) => {
+          const rolesData = response?.data;
+          console.log("RoleToSend: ", rolesData);
+          console.log("Réponse: ", response);
+          setRoles(rolesData);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    };
+    doGetRoles();
+  }, [currentUser?.stsTokenManager.accessToken]);
 
   const validateForm = ({ lastName, firstName, email, phoneNumber }) => {
     const errors = {};
@@ -74,6 +101,13 @@ const TellUsMore = () => {
       }
     }
 
+    if (!selectedRole || selectedRole.length === 0) {
+      errors.role = "Veuillez choisir un rôle";
+      toast.error(errors.role);
+    } else if (errors.hasOwnProperty("role")) {
+      delete errors["role"];
+    }
+
     setErrors(errors);
 
     return Object.keys(errors).length === 0;
@@ -97,32 +131,37 @@ const TellUsMore = () => {
       data.phoneNumber = form.phoneNumber.trim();
     }
 
-    updateProfile(auth.currentUser, data)
+    updateProfile(auth.currentUser, data).catch((err) => {
+      toast.error("Oups, nous avons rencontré un problème!");
+      console.error(err);
+    });
+    if (missingInfos.hasOwnProperty("email"))
+      updateEmail(auth.currentUser, data.email).catch((err) => {
+        toast.error("Oups, nous avons rencontré un problème!");
+        console.error(err);
+      });
+    createUser(auth.currentUser.stsTokenManager.accessToken, {
+      idFirebase: currentUser.uid,
+      nom: form.lastName?.trim() || auth.currentUser.displayName.split(" ")[1],
+      prenoms:
+        form.firstName?.trim() || auth.currentUser.displayName.split(" ")[0],
+      email: data.email || auth.currentUser.email,
+      rolesId: selectedRole,
+      telephone: data.phoneNumber || auth.currentUser.phoneNumber,
+    })
       .then(() => {
-        if (!missingInfos.hasOwnProperty("email")) {
-          toast.success("Informations ajoutées avec succès!");
-          setIsLoading(false);
-        }
+        toast.success("Informations ajoutées avec succès!");
       })
       .catch((err) => {
         toast.error("Oups, nous avons rencontré un problème!");
         console.error(err);
+      })
+      .finally(() => {
+        setIsLoading(false);
+        const date = Date.now();
+        while (Date.now() - date < 5000) {}
+        navigate("/");
       });
-    if (missingInfos.hasOwnProperty("email"))
-      updateEmail(auth.currentUser, data.email)
-        .then(() => {
-          toast.success("Informations ajoutées avec succès!");
-        })
-        .catch((err) => {
-          toast.error("Oups, nous avons rencontré un problème!");
-          console.error(err);
-        })
-        .finally(() => {
-          setIsLoading(false);
-          const date = Date.now();
-          while (Date.now() - date < 5000) {}
-          navigate("/");
-        });
   };
 
   return (
@@ -190,6 +229,45 @@ const TellUsMore = () => {
             error={Object.keys(errors).length !== 0}
           />
         )}
+        <div>
+          <p>Quel rôle souhaitez-vous jouer sur notre plateforme?</p>
+          <div className="flex gap-6 justify-between py-1">
+            {roles &&
+              roles.map((e) => (
+                <div key={e._id} className="flex gap-2 items-center">
+                  <label htmlFor={e._id}>{e.nom}</label>
+                  <input
+                    type="radio"
+                    name="role"
+                    id={e._id}
+                    value={e._id}
+                    checked={
+                      selectedRole.length === 1 && selectedRole[0] === e._id
+                    }
+                    onChange={handleRadioChange}
+                    className="w-4 h-4 text-primary bg-gray-100 border-gray-300 focus:ring-primary"
+                  />
+                </div>
+              ))}
+            {roles && (
+              <div className="flex gap-2 items-center">
+                <label htmlFor="all">Les deux</label>
+                <input
+                  type="radio"
+                  name="role"
+                  id="all"
+                  onChange={handleRadioChange}
+                  checked={
+                    selectedRole[0] === roles[0]._id &&
+                    selectedRole[1] === roles[1]._id
+                  }
+                  value={[roles[0]._id, roles[1]._id]}
+                  className="w-4 h-4 text-primary bg-gray-100 border-gray-300 focus:ring-primary"
+                />
+              </div>
+            )}
+          </div>
+        </div>
         <button
           className={
             isLoading
