@@ -1,4 +1,3 @@
-import Cookies from "universal-cookie";
 import { auth } from "./firebase-config";
 import axios from "axios";
 import {
@@ -13,23 +12,24 @@ import {
 
 const { REACT_APP_BACKEND_URL } = process.env;
 
-export const userInfosCompleted = async ({
-  displayName,
-  email,
-  phoneNumber,
-  uid,
-  stsTokenManager: { accessToken },
-}) => {
+export const userInfosCompleted = async (receivedUser) => {
+  let {
+    displayName,
+    email,
+    phoneNumber,
+    uid,
+    stsTokenManager: { accessToken },
+  } = receivedUser;
   const remainingFields = {};
-
+  accessToken = await receivedUser.getIdToken(true);
   let user = await getUser(accessToken, uid);
 
   console.log(user);
 
   if (user) {
-    displayName = displayName || user.nom;
-    email = email || user.email;
-    phoneNumber = phoneNumber || user.telephone;
+    displayName = user.nom;
+    email = user.email;
+    phoneNumber = user.telephone;
   }
   if (!displayName) remainingFields.displayName = "";
   if (!email) remainingFields.email = "";
@@ -88,7 +88,9 @@ export const getUser = async (token, id) => {
   };
   let user = null;
   await fetch(`${REACT_APP_BACKEND_URL}/users/${id}`, config)
-    .then((r) => r.json())
+    .then((r) => {
+      return r.ok ? r.json() : null;
+    })
     .then((data) => (user = data))
     .catch((err) => console.log(err));
 
@@ -115,8 +117,7 @@ export const doSignOut = () => {
 };
 
 export const logOut = () => {
-  const cookies = new Cookies();
-  cookies.set("totalUser", null, { path: "/", sameSite: true });
+  localStorage.removeItem("totalUser");
 
   return doSignOut();
 };

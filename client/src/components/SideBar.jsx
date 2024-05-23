@@ -11,8 +11,9 @@ import { FaShieldAlt } from "react-icons/fa";
 import { AiFillMessage } from "react-icons/ai";
 import { MdImportExport } from "react-icons/md";
 import { IoSettings } from "react-icons/io5";
+import io from "socket.io-client";
 
-const SideBar = ({ signOutFunc, userName, userAvatarURL }) => {
+const SideBar = ({ signOutFunc, uid, userName, userAvatarURL }) => {
   const { sideVisible, setSideVisible } = useLayoutContext();
   const [screenSize, setScreenSize] = useState(null);
   const side = useRef();

@@ -5,6 +5,7 @@ import SideBar from "./components/SideBar";
 import { useLayoutContext } from "./contexts/layoutContext";
 import NavBar from "./components/NavBar";
 import { useEffect } from "react";
+import { auth } from "./config/firebase-config";
 
 const App = () => {
   const { sideVisible } = useLayoutContext();

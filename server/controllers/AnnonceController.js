@@ -3,11 +3,33 @@ import Annonce from "../models/Annonce.js";
 // Créer une nouvelle annonce
 const createAnnonce = async (req, res) => {
   try {
-    const { idUser, detailsVehicule, prixVehicule, etatRegularisation } =
-      req.body;
-
+    const { idUser } = req.headers;
+    const {
+      prixVehicule,
+      anneeVehicule: annee,
+      marqueVehicule: marque,
+      modeleVehicule: modele,
+      placesVehicule: places,
+      transmissionVehicule: transmission,
+      description,
+      photos,
+      TVM,
+      carteGrise,
+      contratAssurance,
+      visiteTechnique,
+    } = req.body;
+    const regularisation = Object.keys(req.body).includes("regularisation");
+    console.log("BBB", req.body);
     // Vérifier si les champs requis sont fournis
-    if (!idUser || !detailsVehicule || !prixVehicule || !etatRegularisation) {
+    if (
+      !idUser ||
+      !prixVehicule ||
+      !description ||
+      !photos ||
+      !transmission ||
+      !TVM ||
+      !modele
+    ) {
       return res
         .status(400)
         .json({ message: "Veuillez fournir tous les champs requis." });
@@ -15,15 +37,30 @@ const createAnnonce = async (req, res) => {
 
     const nouvelleAnnonce = new Annonce({
       idUser,
-      detailsVehicule,
+      detailsVehicule: {
+        annee,
+        marque,
+        modele,
+        transmission,
+        places,
+        photos,
+        pieces: {
+          TVM,
+          carteGrise,
+          contratAssurance,
+          visiteTechnique,
+        },
+      },
       prixVehicule,
-      etatRegularisation,
+      regularisation,
       description,
     });
     const annonceEnregistree = await nouvelleAnnonce.save();
     res.status(201).json(annonceEnregistree);
+    res.status(201);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    console.log(error);
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -40,7 +77,7 @@ const getAnnonces = async (req, res) => {
 // Obtenir une annonce par ID
 const getAnnonceById = async (req, res) => {
   try {
-    const annonce = await Annonce.findById(req.params.id);
+    const annonce = await Annonce.findById(req.params.id).populate("user");
     if (!annonce) {
       return res.status(404).json({ message: "Annonce non trouvée" });
     }

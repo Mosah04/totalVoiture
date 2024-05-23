@@ -15,19 +15,22 @@ export function useAuth() {
 
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(
-    cookies.get("totalUser") || null
+    JSON.parse(localStorage.getItem("totalUser")) || null
   );
   const [loggedIn, setLoggedIn] = useState(Boolean(currentUser));
   const [loading, setLoading] = useState(true);
 
   const initializeUser = (user) => {
     if (user) {
-      setCurrentUser({ ...user });
+      setCurrentUser(user);
+      console.log("AAAA");
+      localStorage.setItem("totalUser", JSON.stringify(user));
+      console.log(JSON.parse(localStorage.getItem("totalUser")));
       setLoggedIn(true);
-      cookies.set("totalUser", { ...user }, { path: "/", sameSite: true });
     } else {
-      setCurrentUser(cookies.get("totalUser") || null);
-      setLoggedIn(Boolean(currentUser));
+      setCurrentUser(JSON.parse(localStorage.getItem("totalUser")));
+      console.log("BBBB");
+      setLoggedIn(Boolean(localStorage.getItem("totalUser")));
     }
     setLoading(false);
   };

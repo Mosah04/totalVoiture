@@ -3,6 +3,8 @@ import express from "express";
 import path from "path";
 import cookieParser from "cookie-parser";
 import logger from "morgan";
+// import multer from "multer";
+import bodyParser from "body-parser";
 
 import { fileURLToPath } from "url";
 import { dirname } from "path";
@@ -63,18 +65,19 @@ app.use(cors());
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
-app.use(middleware.decodeToken);
+app.use(express.static(path.join(__dirname, "uploads")));
 
 app.use("/", indexRouter);
 app.use("/annonces", annoncesRouter);
-app.use("/assurances", assurancesRouter);
-app.use("/demandes", demandesRouter);
-app.use("/devis", devisRouter);
-app.use("/reclamations", reclamationsRouter);
-app.use("/transactions", transactionsRouter);
-app.use("/users", usersRouter);
+app.use("/assurances", middleware.decodeToken, assurancesRouter);
+app.use("/demandes", middleware.decodeToken, demandesRouter);
+app.use("/devis", middleware.decodeToken, devisRouter);
+app.use("/reclamations", middleware.decodeToken, reclamationsRouter);
+app.use("/transactions", middleware.decodeToken, transactionsRouter);
+app.use("/users", middleware.decodeToken, usersRouter);
 app.use("/roles", rolesRouter);
 
 // catch 404 and forward to error handler

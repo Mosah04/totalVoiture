@@ -140,7 +140,7 @@ const TellUsMore = () => {
         toast.error("Oups, nous avons rencontré un problème!");
         console.error(err);
       });
-    createUser(auth.currentUser.stsTokenManager.accessToken, {
+    createUser(await auth.currentUser.getIdToken(true), {
       idFirebase: currentUser.uid,
       nom: form.lastName?.trim() || auth.currentUser.displayName.split(" ")[1],
       prenoms:
