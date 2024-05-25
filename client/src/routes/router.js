@@ -20,6 +20,7 @@ import AnnonceError from "../pages/annonces/error.jsx";
 import AnnonceIndex from "../pages/annonces/indexPage.jsx";
 import Assurance from "../pages/Assurance.jsx";
 import Demande from "../pages/Demande.jsx";
+import Settings from "../pages/Settings.jsx";
 
 const router = createBrowserRouter([
   {
@@ -63,13 +64,12 @@ const router = createBrowserRouter([
         ],
       },
       {
-        path: "assurances/*",
-        element: <Assurance />,
-        errorElement: <AnnonceError />,
+        path: "assurances",
+        element: <div> Assurances</div>,
       },
       {
-        path: "importations/*",
-        element: <Demande />,
+        path: "importations",
+        element: <div> Importations</div>,
       },
       {
         path: "messages",
@@ -81,7 +81,7 @@ const router = createBrowserRouter([
       },
       {
         path: "settings",
-        element: <div> Paramètres</div>,
+        element: <Settings />,
       },
     ],
   },
