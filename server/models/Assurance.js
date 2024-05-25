@@ -11,7 +11,7 @@ const assuranceSchema = new Schema(
     typeCouverture: {
       type: String,
       required: true,
-    },g
+    },
     dateDebut: {
       type: Date,
       required: true,

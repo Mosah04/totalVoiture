@@ -8,6 +8,8 @@ import Main from "../Main.js";
 import Annonces from "../pages/Annonces.jsx";
 import Messages from "../pages/Messages.jsx";
 import AnnonceCreate from "../pages/annonces/create.jsx";
+import { annoncesLoader, annoncesLoaderWithId } from "../api/annonce.js";
+import AnnonceShow from "../pages/annonces/show";
 import Settings from "../pages/Settings.jsx";
 
 const router = createBrowserRouter([
@@ -16,12 +18,18 @@ const router = createBrowserRouter([
     element: <Main />,
     children: [
       {
-                path: "annonces/*",
+        path: "annonces/*",
+        loader: annoncesLoader,
         element: <Annonces />,
         children: [
           {
                     path: "create",
             element: <AnnonceCreate />,
+          },
+          {
+            path: ":annonceId",
+            loader: annoncesLoaderWithId,
+            element: <AnnonceShow />,
           },
         ],
             },
