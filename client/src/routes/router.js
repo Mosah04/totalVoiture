@@ -64,12 +64,13 @@ const router = createBrowserRouter([
         ],
       },
       {
-        path: "assurances",
-        element: <div> Assurances</div>,
+        path: "assurances/*",
+        element: <Assurance />,
+        errorElement: <AnnonceError />,
       },
       {
-        path: "importations",
-        element: <div> Importations</div>,
+        path: "importations/*",
+        element: <Demande />,
       },
       {
         path: "messages",
