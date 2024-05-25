@@ -1,4 +1,20 @@
 import Annonce from "../models/Annonce.js";
+import path, { dirname } from "path";
+import fs from "fs";
+
+import { fileURLToPath } from "url";
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+// Fonction pour supprimer un fichier
+const deleteFile = (filePath) => {
+  fs.unlink(filePath, (err) => {
+    if (err) {
+      console.error(`Erreur lors de la suppression du fichier: ${err}`);
+      return;
+    }
+    console.log(`Fichier supprimé: ${filePath}`);
+  });
+};
 
 // Créer une nouvelle annonce
 const createAnnonce = async (req, res) => {
@@ -56,11 +72,10 @@ const createAnnonce = async (req, res) => {
       description,
     });
     const annonceEnregistree = await nouvelleAnnonce.save();
-    res.status(201).json(annonceEnregistree);
-    res.status(201);
+    return res.status(201).json(annonceEnregistree);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 };
 
@@ -73,6 +88,7 @@ const getAnnonces = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+5;
 
 // Obtenir une annonce par ID
 const getAnnonceById = async (req, res) => {
@@ -81,47 +97,146 @@ const getAnnonceById = async (req, res) => {
     if (!annonce) {
       return res.status(404).json({ message: "Annonce non trouvée" });
     }
-    res.status(200).json(annonce);
+    return res.status(200).json(annonce);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.log(error);
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+const getAnnoncesByUserId = async (req, res) => {
+  try {
+    const annonces = await Annonce.find({ idUser: req.params.idUser });
+    if (!annonces) {
+      return res.status(404).json({ message: "Aucune annonce trouvée" });
+    }
+    return res.status(200).json(annonces);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: error.message });
   }
 };
 
 // Mettre à jour une annonce
 const updateAnnonce = async (req, res) => {
   try {
-    const { idUser, detailsVehicule, prixVehicule, etatRegularisation } =
-      req.body;
+    const { idUser } = req.headers;
+    const {
+      prixVehicule,
+      anneeVehicule: annee,
+      marqueVehicule: marque,
+      modeleVehicule: modele,
+      placesVehicule: places,
+      transmissionVehicule: transmission,
+      description,
+      photos,
+    } = req.body;
+    const regularisation = Object.keys(req.body).includes("regularisation");
 
     // Vérifier si les champs requis sont fournis
-    if (!idUser || !detailsVehicule || !prixVehicule || !etatRegularisation) {
+    console.log("REQUEST", req.body);
+    console.log("FILES", req.files);
+    console.log("FILE", req.file);
+    if (
+      !idUser ||
+      !prixVehicule ||
+      !description ||
+      !photos ||
+      !transmission ||
+      !modele
+    ) {
       return res
         .status(400)
         .json({ message: "Veuillez fournir tous les champs requis." });
     }
-
-    const annonce = await Annonce.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    });
-    if (!annonce) {
+    const annonceOld = await Annonce.findById(req.params.id);
+    if (!annonceOld) {
       return res.status(404).json({ message: "Annonce non trouvée" });
     }
-    res.status(200).json(annonce);
+    annonceOld.prixVehicule = prixVehicule;
+    annonceOld.detailsVehicule.marque = marque;
+    annonceOld.detailsVehicule.annee = annee;
+    annonceOld.detailsVehicule.modele = modele;
+    annonceOld.detailsVehicule.places = places;
+    annonceOld.detailsVehicule.transmission = transmission;
+    annonceOld.description = description;
+    annonceOld.regularisation = regularisation;
+    annonceOld.detailsVehicule.photos = annonceOld.detailsVehicule.photos.map(
+      (photo, index) => {
+        if (photos[index]) {
+          const filePath = path.join(
+            __dirname,
+            "..",
+            "uploads/photosVoitures",
+            photo
+          );
+          deleteFile(filePath);
+          return photos[index];
+        }
+        return photo;
+      }
+    );
+    for (const [pathEnd, files] of Object.entries(
+      annonceOld.detailsVehicule.pieces
+    )) {
+      if (req.body[pathEnd].length > 0) {
+        for (const file of files) {
+          const filePath = path.join(
+            __dirname,
+            "..",
+            `uploads/${pathEnd}`,
+            file
+          );
+          deleteFile(filePath);
+        }
+        annonceOld.detailsVehicule.pieces[pathEnd] = req.body[pathEnd];
+      }
+    }
+    annonceOld.save();
+    return res.status(200).json(annonceOld);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    console.log(error);
+    return res.status(400).json({ message: error.message });
   }
 };
 
 // Supprimer une annonce
 const deleteAnnonce = async (req, res) => {
   try {
-    const annonce = await Annonce.findByIdAndDelete(req.params.id);
+    const annonce = await Annonce.findById(req.params.id);
     if (!annonce) {
       return res.status(404).json({ message: "Annonce non trouvée" });
     }
-    res.status(200).json({ message: "Annonce supprimée avec succès" });
+
+    annonce.detailsVehicule.photos.forEach((file) => {
+      const filePath = path.join(
+        __dirname,
+        "..",
+        "uploads/photosVoitures",
+        file
+      ); // Ajustez le chemin selon votre structure de projet
+      deleteFile(filePath);
+    });
+    if (annonce.regularisation) {
+      for (const [pathEnd, files] of Object.entries(
+        annonce.detailsVehicule.pieces
+      )) {
+        for (const file of files) {
+          const filePath = path.join(
+            __dirname,
+            "..",
+            `uploads/${pathEnd}`,
+            file
+          );
+          deleteFile(filePath);
+        }
+      }
+    }
+    await Annonce.findByIdAndDelete(req.params.id);
+    return res.status(200).json({ message: "Annonce supprimée avec succès" });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.log(error);
+    return res.status(500).json({ message: error.message });
   }
 };
 
@@ -129,6 +244,7 @@ export {
   createAnnonce,
   getAnnonces,
   getAnnonceById,
+  getAnnoncesByUserId,
   updateAnnonce,
   deleteAnnonce,
 };

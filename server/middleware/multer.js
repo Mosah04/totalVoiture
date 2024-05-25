@@ -64,3 +64,36 @@ export const manageAnnonceFiles = () => {
 
   return [uploadAnnonce.fields(uploadAnnonceFields), setRequestBody];
 };
+export const manageAnnonceFilesUpdate = () => {
+  const setRequestBody = (req, res, next) => {
+    const responseData = {
+      photos: [null, null, null, null],
+      TVM: [],
+      carteGrise: [],
+      contratAssurance: [],
+      visiteTechnique: [],
+    };
+
+    // Traiter les fichiers et construire l'objet de réponse
+    for (const field in req.files) {
+      if (["0", "1", "2", "3"].includes(field)) {
+        req.files[field].forEach((file) => {
+          responseData.photos[Number(field)] = file.filename;
+        });
+      } else {
+        responseData[field].push(req.files[field][0].filename);
+      }
+    }
+
+    // Ajouter les autres champs du formulaire au body de la requête
+    req.body.photos = responseData.photos;
+    req.body.TVM = responseData.TVM;
+    req.body.carteGrise = responseData.carteGrise;
+    req.body.contratAssurance = responseData.contratAssurance;
+    req.body.visiteTechnique = responseData.visiteTechnique;
+
+    return next();
+  };
+
+  return [uploadAnnonce.fields(uploadAnnonceFields), setRequestBody];
+};

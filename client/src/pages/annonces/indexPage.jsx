@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useLoaderData, useRouteLoaderData } from "react-router-dom";
+import { Link, useLoaderData } from "react-router-dom";
 
 import { IoBookmark, IoBookmarkOutline } from "react-icons/io5";
 import car1 from "../../assets/images/car-audi1.png";
@@ -7,14 +7,19 @@ import { CiUser } from "react-icons/ci";
 import { GiGearStick, GiMoneyStack } from "react-icons/gi";
 import TButton from "../../components/TButton";
 import { getAnnonces } from "../../api";
+import { useAuth } from "../../contexts/authContext";
 const { REACT_APP_BACKEND_URL } = process.env;
 
-const AnnonceIndex = ({ annonces }) => {
+const AnnonceIndex = () => {
+  const {
+    currentUser: { uid },
+  } = useAuth();
+  const { annonces } = useLoaderData();
   // let annonces = null;
   const nFormatter = function (num, digits = 1) {
     const lookup = [
       { value: 1, symbol: "" },
-      { value: 1e3, symbol: "k" },
+      { value: 1e3, symbol: "K" },
       { value: 1e6, symbol: "M" },
       { value: 1e9, symbol: "G" },
       { value: 1e12, symbol: "T" },
@@ -49,9 +54,11 @@ const AnnonceIndex = ({ annonces }) => {
               Publier une offre
             </TButton>
           </Link>
-          <TButton className="min-w-fit p-2" type="button">
-            Voir mes offres
-          </TButton>
+          <Link to={`/annonces/user/${uid}`}>
+            <TButton className="min-w-fit p-2" type="button">
+              Gérer mes offres
+            </TButton>
+          </Link>
         </div>
       </div>
       <div className="mt-4 containerA">

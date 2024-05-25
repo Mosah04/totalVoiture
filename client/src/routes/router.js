@@ -5,11 +5,21 @@ import Auth from "../components/auth";
 import VerifyOtp from "../pages/VerifyOtp";
 import TellUsMore from "../pages/TellUsMore";
 import Main from "../Main.js";
-import Annonces from "../pages/Annonces.jsx";
 import Messages from "../pages/Messages.jsx";
+import {
+  annoncesLoader,
+  annoncesLoaderWithId,
+  annoncesLoaderWithUserId,
+} from "../api/annonce.js";
+import Annonces from "../pages/Annonces.jsx";
 import AnnonceCreate from "../pages/annonces/create.jsx";
-import { annoncesLoader, annoncesLoaderWithId } from "../api/annonce.js";
 import AnnonceShow from "../pages/annonces/show";
+import AnnonceManage from "../pages/annonces/manage.jsx";
+import AnnonceEdit from "../pages/annonces/edit.jsx";
+import AnnonceError from "../pages/annonces/error.jsx";
+import AnnonceIndex from "../pages/annonces/indexPage.jsx";
+import Assurance from "../pages/Assurance.jsx";
+import Demande from "../pages/Demande.jsx";
 
 const router = createBrowserRouter([
   {
@@ -17,10 +27,16 @@ const router = createBrowserRouter([
     element: <Main />,
     children: [
       {
-        path: "annonces/*",
-        loader: annoncesLoader,
+        path: "annonces/",
         element: <Annonces />,
+        errorElement: <AnnonceError />,
         children: [
+          {
+            path: "",
+            element: <AnnonceIndex />,
+            loader: annoncesLoader,
+            index: true,
+          },
           {
             path: "create",
             element: <AnnonceCreate />,
@@ -30,15 +46,30 @@ const router = createBrowserRouter([
             loader: annoncesLoaderWithId,
             element: <AnnonceShow />,
           },
+          {
+            path: "user/:idUser",
+            loader: annoncesLoaderWithUserId,
+            element: <AnnonceManage />,
+          },
+          {
+            path: ":annonceId/edit",
+            loader: annoncesLoaderWithId,
+            element: <AnnonceEdit />,
+          },
+          {
+            path: "*",
+            element: <div>Error 404, not found</div>,
+          },
         ],
       },
       {
-        path: "assurances",
-        element: <div> Assurances</div>,
+        path: "assurances/*",
+        element: <Assurance />,
+        errorElement: <AnnonceError />,
       },
       {
-        path: "importations",
-        element: <div> Importations</div>,
+        path: "importations/*",
+        element: <Demande />,
       },
       {
         path: "messages",

@@ -2,6 +2,8 @@ import React, { useEffect } from "react";
 import { useLoaderData } from "react-router-dom";
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import { Carousel } from "react-responsive-carousel";
+import TButton from "../../components/TButton";
+
 import { IoCarSport } from "react-icons/io5";
 import { IoCalendarOutline } from "react-icons/io5";
 import { GiGearStick, GiMoneyStack } from "react-icons/gi";
@@ -13,10 +15,10 @@ import { BsInfoCircle } from "react-icons/bs";
 import { TbCertificate, TbCertificateOff } from "react-icons/tb";
 import { MdOutlineVerified } from "react-icons/md";
 import { BsPersonBoundingBox } from "react-icons/bs";
+
 const AnnonceShow = () => {
   const { REACT_APP_BACKEND_URL } = process.env;
   const { annonce } = useLoaderData();
-  console.log(new Date());
   useEffect(() => {
     const previousTitle = document.title;
     document.title = `Annonce ${annonce.detailsVehicule.marque} ${annonce.detailsVehicule.modele}`;
@@ -154,6 +156,14 @@ const AnnonceShow = () => {
               </ul>
             </div>
           </div>
+          <div className="py-2 flex justify-between gap-4 flex-wrap">
+            <TButton className={`min-w-fit px-2 py-3`}>
+              Discuter de l'offre
+            </TButton>
+            <TButton className={`min-w-fit px-2 py-3`}>
+              Acheter le véhicule
+            </TButton>
+          </div>
         </div>
         <div className="h-fit rounded-xl bg-background p-3 space-y-3 hidden xl:block xl:w-[30%]">
           <div className="bg-white rounded-xl shadow-md">
@@ -162,13 +172,16 @@ const AnnonceShow = () => {
                 " " +
                 annonce.detailsVehicule.modele}
             </p>
-            <div className="p-2">
+            <div className="p-2 flex flex-col items-center">
               <p>
                 {new Intl.NumberFormat("bj-BJ", {
                   style: "currency",
                   currency: "XOF",
                 }).format(annonce.prixVehicule)}
               </p>
+              <TButton className={`max-w-fit px-2 py-3`}>
+                Acheter le véhicule
+              </TButton>
             </div>
           </div>
         </div>
