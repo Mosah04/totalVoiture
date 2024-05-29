@@ -21,6 +21,7 @@ import AnnonceIndex from "../pages/annonces/indexPage.jsx";
 import Assurance from "../pages/Assurance.jsx";
 import Demande from "../pages/Demande.jsx";
 import Settings from "../pages/Settings.jsx";
+import Utilisateur from "../pages/Utilisateur.jsx";
 
 const router = createBrowserRouter([
   {
@@ -77,8 +78,8 @@ const router = createBrowserRouter([
         element: <Messages />,
       },
       {
-        path: "users",
-        element: <div> Utilisateurs</div>,
+        path: "users/*",
+        element: <Utilisateur/>,
       },
       {
         path: "settings",
