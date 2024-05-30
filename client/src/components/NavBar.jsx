@@ -6,7 +6,7 @@ import avatar from "../assets/images/avatar3.png";
 
 const NavBar = ({ userAvatar }) => {
   return (
-    <div className="sticky top-0 py-4 flex justify-between items-center w-full bg-background">
+    <div className="sticky top-0 py-4 flex justify-between items-center w-full bg-background z-10">
       <div>
         <div className="relative">
           <div className="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">

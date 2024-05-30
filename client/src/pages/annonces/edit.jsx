@@ -15,12 +15,15 @@ const { REACT_APP_BACKEND_URL } = process.env;
 
 configValidatorFr();
 const AnnonceEdit = () => {
-  const { annonce } = useLoaderData();
-  const { annonceId } = useParams();
   const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(1);
+
+  const { annonceId } = useParams();
+
+  const { annonce } = useLoaderData();
   const initialForm = useRef(annonce);
   const [form, setForm] = useState(initialForm.current);
+
   const [fileInputMessage, setFileInputMessage] = useState({
     carteGrise: {
       error: false,

@@ -73,7 +73,7 @@ app.use(express.static(path.join(__dirname, "uploads")));
 app.use("/", indexRouter);
 app.use("/annonces", annoncesRouter);
 app.use("/assurances", middleware.decodeToken, assurancesRouter);
-app.use("/demandes", middleware.decodeToken, demandesRouter);
+app.use("/demandes", demandesRouter);
 app.use("/devis", middleware.decodeToken, devisRouter);
 app.use("/reclamations", middleware.decodeToken, reclamationsRouter);
 app.use("/transactions", middleware.decodeToken, transactionsRouter);

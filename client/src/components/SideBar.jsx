@@ -45,7 +45,7 @@ const SideBar = ({ signOutFunc, uid, userName, userAvatarURL }) => {
   return (
     <aside
       ref={side}
-      className={`fixed z-10 flex-shrink-0 bg-white w-72 h-screen text-font-light transition-transform duration-500 ${
+      className={`fixed z-20 flex-shrink-0 bg-white w-72 h-full text-font-light transition-transform duration-500 ${
         sideVisible ? "" : "translate-x-[-100%]"
       }`}
     >
@@ -55,7 +55,7 @@ const SideBar = ({ signOutFunc, uid, userName, userAvatarURL }) => {
           className="inline-flex absolute bg-white top-1/2 right-0 translate-x-[100%] text-font-bold font-bold h-9 items-center rounded-r-lg cursor-pointer drop-shadow-lg"
         >
           <IoIosArrowBack
-            className={`transition-transform duration-300  ${
+            className={`transition-transform duration-300 text-xl  ${
               sideVisible ? "" : "rotate-180"
             }`}
           />

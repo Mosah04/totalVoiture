@@ -21,6 +21,16 @@ import AnnonceIndex from "../pages/annonces/indexPage.jsx";
 import Assurance from "../pages/Assurance.jsx";
 import Demande from "../pages/Demande.jsx";
 import Settings from "../pages/Settings.jsx";
+import DemandeIndex from "../pages/demandes/index.jsx";
+import {
+  demandesLoader,
+  demandesLoaderWithId,
+  demandesLoaderWithUserId,
+} from "../api/demande.js";
+import DemandeCreate from "../pages/demandes/create.jsx";
+import DemandeShow from "../pages/demandes/show.jsx";
+import DemandeManage from "../pages/demandes/manage.jsx";
+import DemandeEdit from "../pages/demandes/edit.jsx";
 
 const router = createBrowserRouter([
   {
@@ -69,8 +79,39 @@ const router = createBrowserRouter([
         errorElement: <AnnonceError />,
       },
       {
-        path: "importations/*",
+        path: "importations/",
         element: <Demande />,
+        children: [
+          {
+            path: "",
+            element: <DemandeIndex />,
+            loader: demandesLoader,
+            index: true,
+          },
+          {
+            path: "create",
+            element: <DemandeCreate />,
+          },
+          {
+            path: "show/:demandeId",
+            loader: demandesLoaderWithId,
+            element: <DemandeShow />,
+          },
+          {
+            path: "user/:idUser",
+            loader: demandesLoaderWithUserId,
+            element: <DemandeManage />,
+          },
+          {
+            path: ":demandeId/edit",
+            loader: demandesLoaderWithId,
+            element: <DemandeEdit />,
+          },
+          {
+            path: "*",
+            element: <div>Error 404, not found</div>,
+          },
+        ],
       },
       {
         path: "messages",

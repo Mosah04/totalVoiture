@@ -10,7 +10,7 @@ export const createAnnonce = async (token, data) => {
       body: data,
     });
     if (!response.ok) {
-      console.log(response.status);
+      console.log(response);
       throw new Error(
         `HTTP error! status: ${response.status}, message: ${response.message}`
       );

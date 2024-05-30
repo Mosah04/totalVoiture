@@ -2,7 +2,20 @@ import Demande from "../models/Demande.js";
 
 const createDemande = async (req, res) => {
   try {
-    const nouvelleDemande = new Demande(req.body);
+    const { idUser } = req.headers;
+    const {
+      detailsVehicule: { marque, modele, annee, etat, chassis },
+      paysDepart,
+      paysArrivee,
+      message,
+    } = req.body;
+    const nouvelleDemande = new Demande({
+      idUser,
+      detailsVehicule: { marque, modele, annee, etat, chassis },
+      paysDepart,
+      paysArrivee,
+      message,
+    });
     const demandeEnregistree = await nouvelleDemande.save();
     res.status(201).json(demandeEnregistree);
   } catch (error) {
@@ -21,7 +34,19 @@ const getDemandes = async (req, res) => {
 
 const getDemandeById = async (req, res) => {
   try {
-    const demande = await Demande.findById(req.params.id);
+    const demande = await Demande.findById(req.params.id).populate("user");
+    if (!demande) {
+      return res.status(404).json({ message: "Demande non trouvée" });
+    }
+    res.status(200).json(demande);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const getDemandeByUserId = async (req, res) => {
+  try {
+    const demande = await Demande.find({ idUser: req.params.idUser });
     if (!demande) {
       return res.status(404).json({ message: "Demande non trouvée" });
     }
@@ -33,9 +58,24 @@ const getDemandeById = async (req, res) => {
 
 const updateDemande = async (req, res) => {
   try {
-    const demande = await Demande.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    });
+    const {
+      detailsVehicule: { marque, modele, annee, etat, chassis },
+      paysDepart,
+      paysArrivee,
+      message,
+    } = req.body;
+    const demande = await Demande.findByIdAndUpdate(
+      req.params.id,
+      {
+        detailsVehicule: { marque, modele, annee, etat, chassis },
+        paysDepart,
+        paysArrivee,
+        message,
+      },
+      {
+        new: true,
+      }
+    );
     if (!demande) {
       return res.status(404).json({ message: "Demande non trouvée" });
     }
@@ -61,6 +101,7 @@ export {
   createDemande,
   getDemandes,
   getDemandeById,
+  getDemandeByUserId,
   updateDemande,
   deleteDemande,
 };

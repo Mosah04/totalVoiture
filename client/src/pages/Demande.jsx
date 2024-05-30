@@ -1,7 +1,5 @@
 import React from "react";
-import { Routes, Route } from "react-router-dom";
-import DemandeIndex from "./demandes";
-import DemandeShow from "./demandes/show";
+import { Outlet } from "react-router-dom";
 
 const Demande = () => {
   return (
@@ -10,13 +8,7 @@ const Demande = () => {
         Demandes d'importation
       </h1>
       <div className="w-full">
-        <Routes>
-          <Route path="" element={<DemandeIndex />} />
-          <Route path="edit" element={<div>Edit oh</div>} />
-          <Route path="show" element={<DemandeShow />} />
-          <Route path="hide" element={<div>Hide oh</div>} />
-          <Route path="*" element={<div>Not found x(</div>} />
-        </Routes>
+        <Outlet />
       </div>
     </section>
   );

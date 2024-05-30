@@ -32,7 +32,7 @@ const App = () => {
 
   // console.log(currentUser);
   return (
-    <main className="flex bg-background min-w-screen min-h-screen font-dm-sans text-font-normal">
+    <main className="flex bg-background min-w-screen h-full font-dm-sans text-font-normal">
       <SideBar
         signOutFunc={() => {
           // setLoggedIn(false);

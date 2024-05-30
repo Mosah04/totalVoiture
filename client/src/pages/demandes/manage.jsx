@@ -1,25 +1,23 @@
-import React, { useEffect, useRef, useState } from "react";
-import { FaRegEye } from "react-icons/fa";
+import React, { useState, useEffect } from "react";
+import { Toaster, toast } from "react-hot-toast";
+import { FaRegEye, FaTrashAlt } from "react-icons/fa";
 import { HiOutlinePencil } from "react-icons/hi2";
-import { FaTrashAlt } from "react-icons/fa";
-import { useFetcher, useLoaderData, Link } from "react-router-dom";
+import { useLoaderData, Link, useFetcher } from "react-router-dom";
 import { useAuth } from "../../contexts/authContext";
 import confirm from "../../components/Confirmation";
-import { Toaster, toast } from "react-hot-toast";
-const { REACT_APP_BACKEND_URL } = process.env;
 
-const AnnonceManage = () => {
-  const { annonces: annoncesInitial } = useLoaderData();
-  const [annonces, setAnnonces] = useState(annoncesInitial);
-  console.log("Annonces", annonces);
-  const fetcher = useFetcher();
-  // console.log("DATA", fetcher.data);
+const DemandeManage = () => {
+  const { demandes: demandesInitial } = useLoaderData();
+  const [demandes, setDemandes] = useState(demandesInitial);
   const { currentUser } = useAuth();
+  const { REACT_APP_BACKEND_URL } = process.env;
+  const fetcher = useFetcher();
+
   useEffect(() => {
     if (fetcher.state === "idle" && fetcher.data) {
       console.log("Ici ooooh");
-      const { annonces: annoncesFetched } = fetcher.data;
-      setAnnonces(annoncesFetched);
+      const { demandes: demandesFetched } = fetcher.data;
+      setDemandes(demandesFetched);
     }
   }, [fetcher.data]);
 
@@ -31,7 +29,7 @@ const AnnonceManage = () => {
           toast.loading("Suppression en cours");
           const token = await currentUser.getIdToken(true);
           const response = await fetch(
-            `${REACT_APP_BACKEND_URL}/annonces/${id}`,
+            `${REACT_APP_BACKEND_URL}/demandes/${id}`,
             {
               method: "DELETE",
               headers: { Authorization: `Bearer ${token}` },
@@ -44,7 +42,11 @@ const AnnonceManage = () => {
           }
         } catch (error) {
           console.log(error);
-          toast.error("Erreur lors de la suppresion!");
+          if (
+            error.message === "Firebase: Error (auth/network-request-failed)."
+          )
+            toast.error("Erreur de connexion!");
+          else toast.error("Erreur lors de la suppresion!");
           return;
         }
         toast.success("Suppresion réussie!");
@@ -56,7 +58,6 @@ const AnnonceManage = () => {
       }
     };
   };
-
   return (
     <div>
       <Toaster
@@ -76,13 +77,13 @@ const AnnonceManage = () => {
               Modèle
             </th>
             <th scope="col" className="px-4 py-3">
-              Prix
+              N° de chassis
             </th>
             <th scope="col" className="px-4 py-3">
               Date de publication
             </th>
             <th scope="col" className="px-4 py-3">
-              Validation
+              Etat
             </th>
             <th scope="col" className="px-4 py-3">
               <span className="block text-center">Actions</span>
@@ -90,10 +91,10 @@ const AnnonceManage = () => {
           </tr>
         </thead>
         <tbody>
-          {annonces.length > 0 &&
-            annonces.map((annonce, index) => (
+          {demandes.length > 0 &&
+            demandes.map((demande, index) => (
               <tr
-                key={annonce._id}
+                key={demande._id}
                 className="border-b transition-hover duration-300 hover:bg-white"
               >
                 <td className="px-4 py-2">
@@ -103,48 +104,47 @@ const AnnonceManage = () => {
                 </td>
                 <td className="px-4 py-2">
                   <span className="bg-primary-100 text-xs font-medium px-2 py-0.5">
-                    {annonce._id}
+                    {demande._id}
                   </span>
                 </td>
 
                 <td className="px-4 py-2">
                   <span className="bg-primary-100 text-xs font-medium px-2 py-0.5">
-                    {annonce.detailsVehicule.modele}
+                    {demande.detailsVehicule.modele}
                   </span>
                 </td>
                 <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap">
                   <span className="bg-primary-100 text-xs font-medium px-2 py-0.5">
-                    {Intl.NumberFormat("bj-BJ", {
-                      style: "currency",
-                      currency: "XOF",
-                    }).format(annonce.prixVehicule)}
+                    {demande.detailsVehicule.chassis}
                   </span>
                 </td>
                 <td className="px-4 py-2">
                   <span className="bg-primary-100 text-xs font-medium px-2 py-0.5">
-                    {new Date(annonce.createdAt).toLocaleDateString()}
+                    {new Date(demande.createdAt).toLocaleDateString()}
                   </span>
                 </td>
                 <td className="px-4 py-2">
                   <span
                     className={`bg-primary-100 text-xs font-medium px-2 py-0.5 ${
-                      annonce.validationAdmin
+                      demande.statut === "finalisé"
                         ? "text-green-500"
-                        : "text-secondary"
+                        : demande.statut === "rejeté"
+                        ? "text-secondary"
+                        : "text-yellow-500"
                     }`}
                   >
-                    {annonce.validationAdmin ? "Validée" : "Non validée"}
+                    {demande.statut[0].toUpperCase() + demande.statut.slice(1)}
                   </span>
                 </td>
                 <td>
                   <div className="flex justify-center gap-4 px-2">
-                    <Link to={`/annonces/${annonce._id}`}>
+                    <Link to={`/importations/show/${demande._id}`}>
                       <FaRegEye
                         title="Voir"
                         className="transition-hover duration-300 hover:text-green-500"
                       />
                     </Link>
-                    <Link to={`/annonces/${annonce._id}/edit`}>
+                    <Link to={`/importations/${demande._id}/edit`}>
                       <HiOutlinePencil
                         title="Modifier"
                         className="transition-hover duration-300 hover:text-yellow-500"
@@ -153,7 +153,7 @@ const AnnonceManage = () => {
                     <FaTrashAlt
                       title="Supprimer"
                       className="transition-hover duration-300 hover:text-secondary"
-                      onClick={handleOnDeleteClick(annonce._id)}
+                      onClick={handleOnDeleteClick(demande._id)}
                     />
                   </div>
                 </td>
@@ -161,16 +161,8 @@ const AnnonceManage = () => {
             ))}
         </tbody>
       </table>
-      {annonces.length <= 0 && (
-        <div className="text-center w-full mt-2">
-          Aucune annonce trouvée! Voulez-vous en poster?{" "}
-          <span className="text-primary underline">
-            <Link to={"/annonces/create"}>C'est par ici.</Link>
-          </span>
-        </div>
-      )}
     </div>
   );
 };
 
-export default AnnonceManage;
+export default DemandeManage;
