@@ -66,8 +66,10 @@ const Messages = () => {
             </div>
             <div className="inline-flex items-center p-2 rounded-full w-8 h-8 bg-[#F5F6FA] font-bold cursor-pointer">
               <HiOutlineDotsVertical />
+            
             </div>
           </div>
+          
         </div>
       </div>
     </div>

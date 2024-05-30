@@ -31,6 +31,7 @@ import DemandeCreate from "../pages/demandes/create.jsx";
 import DemandeShow from "../pages/demandes/show.jsx";
 import DemandeManage from "../pages/demandes/manage.jsx";
 import DemandeEdit from "../pages/demandes/edit.jsx";
+import Utilisateur from "../pages/Utilisateur.jsx";
 
 const router = createBrowserRouter([
   {
@@ -118,8 +119,8 @@ const router = createBrowserRouter([
         element: <Messages />,
       },
       {
-        path: "users",
-        element: <div> Utilisateurs</div>,
+        path: "users/*",
+        element: <Utilisateur />,
       },
       {
         path: "settings",

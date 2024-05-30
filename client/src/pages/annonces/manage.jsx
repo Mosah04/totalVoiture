@@ -150,7 +150,7 @@ const AnnonceManage = () => {
                         className="transition-hover duration-300 hover:text-yellow-500"
                       />
                     </Link>
-                    <FaTrashAlt
+                    <FaTrashAlt                                                                     
                       title="Supprimer"
                       className="transition-hover duration-300 hover:text-secondary"
                       onClick={handleOnDeleteClick(annonce._id)}
