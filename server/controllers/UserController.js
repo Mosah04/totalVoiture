@@ -43,7 +43,9 @@ const getUsers = async (req, res) => {
 // Obtenir un utilisateur par son ID
 const getUserById = async (req, res) => {
   try {
-    const utilisateur = await User.findOne({ idFirebase: req.params.id });
+    const utilisateur = await User.findOne({
+      idFirebase: req.params.id,
+    }).populate("roles");
     if (!utilisateur) {
       return res.status(404).json({ message: "Utilisateur non trouvé" });
     }

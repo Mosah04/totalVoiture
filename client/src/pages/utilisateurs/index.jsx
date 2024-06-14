@@ -1,16 +1,16 @@
-import React, { useState } from 'react'
-import { FaRegEye, FaTrashAlt } from 'react-icons/fa'
-import { HiOutlinePencil } from 'react-icons/hi2'
-import { Link } from 'react-router-dom'
+import React, { useState } from "react";
+import { FaRegEye, FaTrashAlt } from "react-icons/fa";
+import { HiOutlinePencil } from "react-icons/hi2";
+import { Link } from "react-router-dom";
 
 const UtilisateurIndex = () => {
-  const [isEditMode, setIsEditMode] = useState(false)
-  const [selectedUser, setSelectedUser] = useState(null)
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
 
   const toggleEditMode = (user) => {
-    setSelectedUser(user)
-    setIsEditMode(!isEditMode)
-  }
+    setSelectedUser(user);
+    setIsEditMode(!isEditMode);
+  };
 
   return (
     <div>
@@ -58,7 +58,17 @@ const UtilisateurIndex = () => {
                         className="transition-hover duration-300 hover:text-green-500"
                       />
                     </Link>
-                    <button onClick={() => toggleEditMode({ id: 1, nom: 'Dupont', prenom: 'Jean', email: 'jean.dupont@example.com', numero: '0123456789' })}>
+                    <button
+                      onClick={() =>
+                        toggleEditMode({
+                          id: 1,
+                          nom: "Dupont",
+                          prenom: "Jean",
+                          email: "jean.dupont@example.com",
+                          numero: "0123456789",
+                        })
+                      }
+                    >
                       <HiOutlinePencil
                         title="Modifier"
                         className="transition-hover duration-300 hover:text-yellow-500"
@@ -71,7 +81,6 @@ const UtilisateurIndex = () => {
                   </div>
                 </td>
               </tr>
-              
             </tbody>
           </table>
         </div>
@@ -80,7 +89,9 @@ const UtilisateurIndex = () => {
       {isEditMode && (
         <div className="fixed top-0 left-0 w-full h-full bg-gray-800 bg-opacity-50 flex justify-center items-center">
           <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
-            <h2 className="text-2xl font-bold mb-4">Modifier les informations de l'utilisateur</h2>
+            <h2 className="text-2xl font-bold mb-4">
+              Modifier les informations de l'utilisateur
+            </h2>
             <form>
               <div className="mb-4">
                 <label htmlFor="nom" className="block font-bold mb-2">
@@ -146,7 +157,7 @@ const UtilisateurIndex = () => {
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default UtilisateurIndex
+export default UtilisateurIndex;

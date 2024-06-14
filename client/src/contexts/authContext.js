@@ -3,11 +3,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../config/firebase-config";
 
-import Cookies from "universal-cookie";
-
 const AuthContext = React.createContext();
-
-const cookies = new Cookies();
 
 export function useAuth() {
   return useContext(AuthContext);
@@ -19,6 +15,9 @@ export function AuthProvider({ children }) {
   );
   const [loggedIn, setLoggedIn] = useState(Boolean(currentUser));
   const [loading, setLoading] = useState(true);
+  const [currentUserDB, setCurrentUserDB] = useState(
+    JSON.parse(localStorage.getItem("totalUserDB")) || null
+  );
 
   const initializeUser = (user) => {
     if (user) {
@@ -41,7 +40,15 @@ export function AuthProvider({ children }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ currentUser, loggedIn, loading }}>
+    <AuthContext.Provider
+      value={{
+        currentUser,
+        loggedIn,
+        loading,
+        currentUserDB,
+        setCurrentUserDB,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

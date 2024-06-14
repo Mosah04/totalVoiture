@@ -1,77 +1,102 @@
-import React from "react";
-import SuperInput from "../components/SuperInput";
-import { IoIosSearch } from "react-icons/io";
-import { LuMessageSquare } from "react-icons/lu";
-import avatar from "../assets/images/avatar3.png";
-import { HiOutlineDotsVertical } from "react-icons/hi";
+import React, { useEffect, useRef } from "react";
+import {
+  MultiChatWindow,
+  MultiChatSocket,
+  useMultiChatLogic,
+} from "react-chat-engine-advanced";
+import { useAuth } from "../contexts/authContext";
+const projectId = "33aad286-c8c7-4df1-bbc5-559780945e4f";
+const projectKey = "7a5f546a-dd0f-4a7e-b0ea-aeecaad233c5";
 
 const Messages = () => {
+  const { currentUserDB } = useAuth();
+  const { isAdmin } = currentUserDB;
+  const username = currentUserDB.isAdmin ? "Admin" : currentUserDB.email,
+    secret = currentUserDB.isAdmin ? "azerty&23" : currentUserDB._id;
+
+  console.log("YAHOOO", currentUserDB);
+
+  useEffect(() => {
+    if (currentUserDB.isAdmin) return;
+
+    const getOrCreateChatUser = async () => {
+      const myHeaders = new Headers();
+      myHeaders.append("PRIVATE-KEY", projectKey);
+      myHeaders.append("Content-Type", "application/json");
+
+      const raw = JSON.stringify({
+        username,
+        secret,
+      });
+
+      const requestOptions = {
+        method: "PUT",
+        headers: myHeaders,
+        body: raw,
+        redirect: "follow",
+      };
+      try {
+        const response = await fetch(
+          "https://api.chatengine.io/users/",
+          requestOptions
+        );
+        let result = await response.text();
+        result = JSON.parse(result);
+        console.log(result);
+      } catch (error) {
+        console.log("Error while connecting to chat", error);
+        throw new Error(
+          "Oups, nous avons eu une erreur en nous connectant au chat!"
+        );
+      }
+    };
+
+    getOrCreateChatUser();
+  }, [currentUserDB]);
+
+  const chatProps = useMultiChatLogic(projectId, username, secret);
+
   return (
-    <div className="w-full bg-white p-4">
-      <div className="flex w-full gap-6">
-        <div className="flex flex-col flex-shrink-0 w-[20%] min-w-[234px] border border-black">
-          <div className="flex flex-col mb-2 justify-between">
-            <h1 className="text-xl text-font-bold font-bold">Messages</h1>
-          </div>
-
-          <SuperInput
-            htmlFor="search-messages"
-            name="search-messages"
-            type="text"
-            children={<IoIosSearch />}
-            placeholder="Rechercher..."
-          />
-
-          <div className="mt-6">
-            <span className="text-xs flex gap-2 mb-2">
-              <LuMessageSquare />
-              Tous les messages
-            </span>
-            <div className="flex flex-col gap-3 max-h-full overflow-y-scroll">
-              <div className="flex gap-4 items-center">
-                <img
-                  src={avatar}
-                  alt="messageSender"
-                  className="h-12 w-12 rounded-full"
-                />
-                <div className="w-full">
-                  <span className="flex w-full items-center justify-between">
-                    <span className="text-font-bold font-bold">
-                      Gilbert ATTAN
-                    </span>
-                    <span className="text-xs text-font-normal">12:00</span>
-                  </span>
-                  <span className="text-xs">Salut par ici</span>
-                </div>
+    <div className="border border-orange-500 h-[calc(80vh)]">
+      {/* 3. COMPONENT */}
+      {isAdmin ? (
+        <MultiChatWindow
+          {...chatProps}
+          renderChatHeader={() => {
+            return (
+              <div className="w-full text-2xl font-bold text-font-bold pt-3 text-center">
+                Messages
               </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="w-full border">
-          <div className="flex justify-between py-3 px-8 rounded-lg border items-center">
-            <div className="flex gap-3">
-              <div className="relative inline-block w-fit">
-                <img
-                  src={avatar}
-                  alt="messageSender"
-                  className="h-12 w-12 rounded-full"
-                />
-                <div className="absolute bottom-0 right-0 bg-green-400 h-3 w-3 rounded-full border border-white"></div>
+            );
+          }}
+        />
+      ) : (
+        <MultiChatWindow
+          {...chatProps}
+          renderChatHeader={() => {
+            return (
+              <div className="w-full text-2xl font-bold text-font-bold pt-3 text-center">
+                Messages
               </div>
-              <div className="flex flex-col justify-between">
-                <span className="text-font-bold font-bold">Gilbert ATTAN</span>
-                <span className="text-xs ">En ligne</span>
+            );
+          }}
+          renderChatForm={() => {
+            return (
+              <div className="w-full text-2xl font-bold text-font-bold py-3 text-center">
+                Vos discussions
               </div>
-            </div>
-            <div className="inline-flex items-center p-2 rounded-full w-8 h-8 bg-[#F5F6FA] font-bold cursor-pointer">
-              <HiOutlineDotsVertical />
-            
-            </div>
-          </div>
-          
-        </div>
-      </div>
+            );
+          }}
+          renderOptionsSettings={() => {
+            return;
+          }}
+          renderPeopleSettings={() => {
+            return;
+          }}
+        />
+      )}
+      {/* 4. SOCKET */}
+      <MultiChatSocket {...chatProps} />
     </div>
   );
 };

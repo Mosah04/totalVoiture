@@ -35,7 +35,9 @@ export const userInfosCompleted = async (receivedUser) => {
   if (!email) remainingFields.email = "";
   if (!phoneNumber) remainingFields.phoneNumber = "";
 
+  localStorage.setItem("totalUserDB", JSON.stringify(user));
   return [
+    user,
     Object.keys(remainingFields).length === 0 && Boolean(user.rolesId?.length),
     remainingFields,
   ];
@@ -118,6 +120,7 @@ export const doSignOut = () => {
 
 export const logOut = () => {
   localStorage.removeItem("totalUser");
+  localStorage.removeItem("totalUserDB");
 
   return doSignOut();
 };

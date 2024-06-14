@@ -5,20 +5,21 @@ import SideBar from "./components/SideBar";
 import { useLayoutContext } from "./contexts/layoutContext";
 import NavBar from "./components/NavBar";
 import { useEffect } from "react";
-import { auth } from "./config/firebase-config";
 
 const App = () => {
   const { sideVisible } = useLayoutContext();
-  const { currentUser } = useAuth();
+  const { currentUser, setCurrentUserDB } = useAuth();
 
   const navigate = useNavigate();
 
   useEffect(() => {
     if (!currentUser) return;
     userInfosCompleted(currentUser)
-      .then(([infosAreCompleted, missingInfos]) => {
-        if (!infosAreCompleted)
+      .then(([user, infosAreCompleted, missingInfos]) => {
+        if (!infosAreCompleted) {
           navigate("/tellUsMore", { state: missingInfos, replace: true });
+        }
+        if (user) setCurrentUserDB(user);
       })
       .catch((error) => {
         console.error(
@@ -26,7 +27,7 @@ const App = () => {
           error
         );
       });
-  }, []);
+  }, [currentUser]);
 
   if (!currentUser) return <Navigate to={"/login"} replace={true} />;
 
