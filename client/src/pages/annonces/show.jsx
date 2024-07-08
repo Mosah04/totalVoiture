@@ -15,6 +15,7 @@ import { BsInfoCircle } from "react-icons/bs";
 import { TbCertificate, TbCertificateOff } from "react-icons/tb";
 import { MdOutlineVerified } from "react-icons/md";
 import { BsPersonBoundingBox } from "react-icons/bs";
+import { useAuth } from "../../contexts/authContext";
 
 const AnnonceShow = () => {
   const { REACT_APP_BACKEND_URL } = process.env;
@@ -24,6 +25,9 @@ const AnnonceShow = () => {
     document.title = `Annonce ${annonce.detailsVehicule.marque} ${annonce.detailsVehicule.modele}`;
     return () => (document.title = previousTitle);
   }, [annonce]);
+
+  const { currentUserDB } = useAuth();
+
   return (
     <div>
       <div className="bg-white rounded-xl gap-8 justify-center p-3 flex">

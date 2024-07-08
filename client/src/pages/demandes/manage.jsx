@@ -9,7 +9,7 @@ import confirm from "../../components/Confirmation";
 const DemandeManage = () => {
   const { demandes: demandesInitial } = useLoaderData();
   const [demandes, setDemandes] = useState(demandesInitial);
-  const { currentUser } = useAuth();
+  const { currentUser, currentUserDB } = useAuth();
   const { REACT_APP_BACKEND_URL } = process.env;
   const fetcher = useFetcher();
 
@@ -23,7 +23,6 @@ const DemandeManage = () => {
 
   const handleOnDeleteClick = (id) => {
     return async () => {
-      console.log("hoge!");
       if (await confirm("Voulez-vous vraiment supprimer cette annonce?")) {
         try {
           toast.loading("Suppression en cours");
@@ -88,6 +87,7 @@ const DemandeManage = () => {
             <th scope="col" className="px-4 py-3">
               <span className="block text-center">Actions</span>
             </th>
+            <th scope="col" className="px-4 py-3"></th>
           </tr>
         </thead>
         <tbody>
@@ -98,34 +98,34 @@ const DemandeManage = () => {
                 className="border-b transition-hover duration-300 hover:bg-white"
               >
                 <td className="px-4 py-2">
-                  <span className="bg-primary-100 text-xs font-medium px-2 py-0.5">
+                  <span className="text-xs font-medium px-2 py-0.5">
                     {index + 1}
                   </span>
                 </td>
                 <td className="px-4 py-2">
-                  <span className="bg-primary-100 text-xs font-medium px-2 py-0.5">
+                  <span className="text-xs font-medium px-2 py-0.5">
                     {demande._id}
                   </span>
                 </td>
 
                 <td className="px-4 py-2">
-                  <span className="bg-primary-100 text-xs font-medium px-2 py-0.5">
+                  <span className="text-xs font-medium px-2 py-0.5">
                     {demande.detailsVehicule.modele}
                   </span>
                 </td>
                 <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap">
-                  <span className="bg-primary-100 text-xs font-medium px-2 py-0.5">
+                  <span className="text-xs font-medium px-2 py-0.5">
                     {demande.detailsVehicule.chassis}
                   </span>
                 </td>
                 <td className="px-4 py-2">
-                  <span className="bg-primary-100 text-xs font-medium px-2 py-0.5">
+                  <span className="text-xs font-medium px-2 py-0.5">
                     {new Date(demande.createdAt).toLocaleDateString()}
                   </span>
                 </td>
                 <td className="px-4 py-2">
                   <span
-                    className={`bg-primary-100 text-xs font-medium px-2 py-0.5 ${
+                    className={`text-xs font-medium px-2 py-0.5 ${
                       demande.statut === "finalisé"
                         ? "text-green-500"
                         : demande.statut === "rejeté"
@@ -157,10 +157,25 @@ const DemandeManage = () => {
                     />
                   </div>
                 </td>
+                <td>
+                  <Link to={`/importations/${demande._id}/devis`}>
+                    <span className="text-xs font-medium px-2 py-0.5 hover:text-primary hover:underline">
+                      Voir les devis proposés
+                    </span>
+                  </Link>
+                </td>
               </tr>
             ))}
         </tbody>
       </table>
+      {demandes.length <= 0 && (
+        <div className="text-center w-full mt-2">
+          Aucune demande trouvée! Voulez-vous en poster?{" "}
+          <span className="text-primary underline">
+            <Link to={"/importations/create"}>C'est par ici.</Link>
+          </span>
+        </div>
+      )}
     </div>
   );
 };

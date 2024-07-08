@@ -1,3 +1,5 @@
+import { redirect } from "react-router-dom";
+
 const { REACT_APP_BACKEND_URL } = process.env;
 
 export const createDemande = async (token, data) => {
@@ -40,7 +42,7 @@ export const updateDemande = async (token, demandeId, data) => {
     }
     return await response.json();
   } catch (error) {
-    console.error("Error in createDemande:", error.message);
+    console.error("Error in updateDemande:", error.message);
     throw new Error(error);
   }
 };
@@ -62,7 +64,7 @@ const getDemandes = async (id = undefined) => {
     const demandes = await response.json();
     return demandes;
   } catch (error) {
-    console.error("Error in createDemande:", error.message);
+    console.error("Error in getDemande:", error.message);
     throw error;
   }
 };
@@ -81,7 +83,7 @@ const getDemandesWithUserId = async (idUser) => {
     const demandes = await response.json();
     return demandes;
   } catch (error) {
-    console.error("Error in manageDemande:", error.message);
+    console.error("Error in getDemandeWithUserId:", error.message);
     throw error;
   }
 };

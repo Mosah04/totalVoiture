@@ -249,7 +249,7 @@ const TellUsMore = () => {
                   />
                 </div>
               ))}
-            {roles && (
+            {/* {roles && (
               <div className="flex gap-2 items-center">
                 <label htmlFor="all">Les deux</label>
                 <input
@@ -265,7 +265,7 @@ const TellUsMore = () => {
                   className="w-4 h-4 text-primary bg-gray-100 border-gray-300 focus:ring-primary"
                 />
               </div>
-            )}
+            )} */}
           </div>
         </div>
         <button

@@ -2,7 +2,7 @@ import React from "react";
 import { IoCarSport, IoCalendarOutline } from "react-icons/io5";
 import { GoNumber } from "react-icons/go";
 import { FaLongArrowAltUp } from "react-icons/fa";
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData, Link } from "react-router-dom";
 import TButton from "../../components/TButton";
 
 const DemandeShow = () => {
@@ -82,7 +82,9 @@ const DemandeShow = () => {
         )}
       </div>
       <div className="min-w-[400px] flex justify-center">
-        <TButton className="min-w-fit py-2 px-4">Je propose un devis</TButton>
+        <Link to={"/devis/create"} state={{ idDemande: demande._id }}>
+          <TButton className="min-w-fit py-2 px-4">Je propose un devis</TButton>
+        </Link>
       </div>
     </div>
   );

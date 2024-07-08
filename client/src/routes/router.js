@@ -1,5 +1,5 @@
 import React from "react";
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 
 import Auth from "../components/auth";
 import VerifyOtp from "../pages/VerifyOtp";
@@ -32,6 +32,25 @@ import DemandeShow from "../pages/demandes/show.jsx";
 import DemandeManage from "../pages/demandes/manage.jsx";
 import DemandeEdit from "../pages/demandes/edit.jsx";
 import Utilisateur from "../pages/Utilisateur.jsx";
+import Devis from "../pages/Devis.jsx";
+import DevisCreate from "../pages/devis/create.jsx";
+import DevisIndex from "../pages/devis/index.jsx";
+import DevisManage from "../pages/devis/manage.jsx";
+import {
+  devisLoaderByDemandeId,
+  devisLoaderWithId,
+  devisLoaderWithUserId,
+} from "../api/devis.js";
+import DevisEdit from "../pages/devis/edit.jsx";
+import DevisShow from "../pages/devis/show.jsx";
+import DemandeDevis from "../pages/demandes/devis.jsx";
+
+import AssuranceIndex from "../pages/assurances/index.jsx";
+import { assuranceORLoaderWithUserId } from "../api/assurance.js";
+import AssuranceDetVehicule from "../pages/assurances/detailsVehicule.jsx";
+import AssuranceManage from "../pages/assurances/manage.jsx";
+import AssuranceOfferCreate from "../pages/assurances/createOffer.jsx";
+import AssuranceSubscriptions from "../pages/assurances/subscriptions.jsx";
 
 const router = createBrowserRouter([
   {
@@ -75,9 +94,32 @@ const router = createBrowserRouter([
         ],
       },
       {
-        path: "assurances/*",
+        path: "assurances/",
         element: <Assurance />,
         errorElement: <AnnonceError />,
+        children: [
+          {
+            path: "",
+            element: <AssuranceIndex />,
+          },
+          {
+            path: "offres/create",
+            element: <AssuranceOfferCreate />,
+          },
+          {
+            path: "user/:idUser",
+            loader: assuranceORLoaderWithUserId,
+            element: <AssuranceManage />,
+          },
+          {
+            path: "user/:idUser/subscriptions",
+            element: <AssuranceSubscriptions />,
+          },
+          {
+            path: "details-vehicule",
+            element: <AssuranceDetVehicule />,
+          },
+        ],
       },
       {
         path: "importations/",
@@ -107,6 +149,45 @@ const router = createBrowserRouter([
             path: ":demandeId/edit",
             loader: demandesLoaderWithId,
             element: <DemandeEdit />,
+          },
+          {
+            path: ":demandeId/devis",
+            loader: devisLoaderByDemandeId,
+            element: <DemandeDevis />,
+          },
+          {
+            path: "*",
+            element: <div>Error 404, not found</div>,
+          },
+        ],
+      },
+      {
+        path: "devis",
+        element: <Devis />,
+        children: [
+          {
+            path: "",
+            element: <DevisIndex />,
+            index: true,
+          },
+          {
+            path: "create",
+            element: <DevisCreate />,
+          },
+          {
+            path: "user/:idUser",
+            loader: devisLoaderWithUserId,
+            element: <DevisManage />,
+          },
+          {
+            path: ":devisId/edit",
+            loader: devisLoaderWithId,
+            element: <DevisEdit />,
+          },
+          {
+            path: "show/:devisId",
+            loader: devisLoaderWithId,
+            element: <DevisShow />,
           },
           {
             path: "*",

@@ -7,6 +7,16 @@ const assuranceSchema = new Schema(
     idUser: {
       type: String,
       required: true,
+      ref: "User",
+    },
+    idOffre: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "AssuranceOffre",
+      required: true,
+    },
+    idOptionPaiement: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
     },
     typeCouverture: {
       type: String,

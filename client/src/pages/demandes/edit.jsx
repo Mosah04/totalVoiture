@@ -6,7 +6,7 @@ import SimpleReactValidator from "simple-react-validator";
 import { configValidatorFr } from "../../config/validatorLocale";
 import { auth } from "../../config/firebase-config";
 import { ImSpinner9 } from "react-icons/im";
-import { createDemande, updateDemande } from "../../api/demande";
+import { updateDemande } from "../../api/demande";
 import { useNavigate, useLoaderData, useParams } from "react-router-dom";
 
 configValidatorFr();

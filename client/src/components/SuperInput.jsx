@@ -14,6 +14,7 @@ const SuperInput = ({
   error,
   min,
   max,
+  disabled,
 }) => {
   return (
     <div className={className}>
@@ -35,12 +36,13 @@ const SuperInput = ({
           onChange={onChange}
           min={min}
           max={max}
-          className={
-            children
-              ? "bg-transparent border border-line text-font-normal text-sm rounded-lg focus:ring-1 focus:ring-primary focus:border-primary outline-none block w-full ps-10 p-2.5"
-              : "bg-transparent border border-line text-font-normal text-sm rounded-lg focus:ring-1 focus:ring-primary focus:border-primary outline-none block w-full p-2.5"
-          }
+          className={`${
+            disabled ? "bg-line" : "bg-transparent"
+          } border border-line text-font-normal text-sm rounded-lg focus:ring-1 focus:ring-primary focus:border-primary outline-none block w-full p-2.5 ${
+            children ? "ps-10" : ""
+          }`}
           placeholder={placeholder}
+          disabled={disabled || false}
         />
       </div>
       {message && (

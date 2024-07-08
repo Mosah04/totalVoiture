@@ -72,9 +72,9 @@ app.use(express.static(path.join(__dirname, "uploads")));
 
 app.use("/", indexRouter);
 app.use("/annonces", annoncesRouter);
-app.use("/assurances", middleware.decodeToken, assurancesRouter);
+app.use("/assurances", assurancesRouter);
 app.use("/demandes", demandesRouter);
-app.use("/devis", middleware.decodeToken, devisRouter);
+app.use("/devis", devisRouter);
 app.use("/reclamations", middleware.decodeToken, reclamationsRouter);
 app.use("/transactions", middleware.decodeToken, transactionsRouter);
 app.use("/users", middleware.decodeToken, usersRouter);
@@ -92,6 +92,7 @@ app.use(function (err, req, res, next) {
   res.locals.error = req.app.get("env") === "development" ? err : {};
 
   // render the error page
+  console.log(err);
   res.status(err.status || 500);
   res.render("error");
 });

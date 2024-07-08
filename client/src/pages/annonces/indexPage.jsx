@@ -1,18 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Link, useLoaderData } from "react-router-dom";
 
 import { IoBookmark, IoBookmarkOutline } from "react-icons/io5";
-import car1 from "../../assets/images/car-audi1.png";
 import { CiUser } from "react-icons/ci";
 import { GiGearStick, GiMoneyStack } from "react-icons/gi";
 import TButton from "../../components/TButton";
-import { getAnnonces } from "../../api";
 import { useAuth } from "../../contexts/authContext";
 const { REACT_APP_BACKEND_URL } = process.env;
 
 const AnnonceIndex = () => {
   const {
     currentUser: { uid },
+    currentUserDB,
   } = useAuth();
   const { annonces } = useLoaderData();
   // let annonces = null;
@@ -56,7 +55,7 @@ const AnnonceIndex = () => {
           </Link>
           <Link to={`/annonces/user/${uid}`}>
             <TButton className="min-w-fit p-2" type="button">
-              Gérer mes offres
+              Gérer {currentUserDB.isAdmin ? "les" : "mes"} offres
             </TButton>
           </Link>
         </div>

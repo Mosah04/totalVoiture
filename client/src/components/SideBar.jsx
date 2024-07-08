@@ -10,6 +10,7 @@ import { HiSpeakerphone } from "react-icons/hi";
 import { FaShieldAlt } from "react-icons/fa";
 import { AiFillMessage } from "react-icons/ai";
 import { MdImportExport } from "react-icons/md";
+import { FaFileInvoiceDollar } from "react-icons/fa";
 import { IoSettings } from "react-icons/io5";
 import io from "socket.io-client";
 
@@ -129,6 +130,22 @@ const SideBar = ({ signOutFunc, uid, userName, userAvatarURL }) => {
               </div>
             </NavLink>
             <NavLink
+              to={"/devis"}
+              className={({ isActive }) =>
+                `relative flex justify-between items-center rounded-r-2xl transition-hover duration-300 hover:bg-background hover:text-font-bold  ${
+                  isActive ? "active font-bold text-font-bold" : ""
+                }`
+              }
+            >
+              <div className="flex gap-2 items-center pl-4 py-3 ">
+                <FaFileInvoiceDollar className="h-6 w-6" />
+                <span>Devis</span>
+              </div>
+              <div className="flex h-6 w-6 text-white font-normal text-sm bg-secondary rounded-full justify-center items-center">
+                2
+              </div>
+            </NavLink>
+            <NavLink
               to={"/messages"}
               className={({ isActive }) =>
                 `relative flex justify-between items-center rounded-r-2xl transition-hover duration-300 hover:bg-background hover:text-font-bold  ${
@@ -182,7 +199,7 @@ const SideBar = ({ signOutFunc, uid, userName, userAvatarURL }) => {
             <div className="relative h-full w-full">
               <div className="absolute left-0 h-full w-[2.5rem] rounded-b-3xl bg-font-bold rounded-tr-3xl"></div>
               <div className="absolute right-0 h-full w-[2.5rem] rounded-b-3xl bg-font-bold rounded-tl-3xl"></div>
-              <div className="absolute bottom-0 pb-3 rounded-b-3xl bg-font-bold h-[72%] w-full flex flex-col justify-end items-center">
+              <div className="absolute bottom-0 pb-3 rounded-b-3xl bg-font-bold h-[71%] w-full flex flex-col justify-end items-center">
                 <div className="absolute bottom-0 flex flex-col items-center  -translate-y-1/2 bg-white  rounded-b-3xl w-[calc(100%-5rem)]">
                   <div className="inline-block h-20 w-20 rounded-full border border-orange-400">
                     <img

@@ -97,3 +97,40 @@ export const manageAnnonceFilesUpdate = () => {
 
   return [uploadAnnonce.fields(uploadAnnonceFields), setRequestBody];
 };
+
+const storageInfosClient = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const fieldname = file.fieldname;
+    let folder = "uploads/" + fieldname;
+
+    cb(null, folder);
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + "_InfosClient-" + file.originalname);
+  },
+});
+
+const uploadInfosClient = multer({ storage: storageInfosClient });
+const uploadInfosClientFields = [
+  { name: "carteGrise", maxCount: 1 },
+  { name: "carteIdentite", maxCount: 1 },
+];
+export const manageInfosClientFiles = () => {
+  const setRequestBody = (req, res, next) => {
+    const responseData = {};
+
+    // Traiter les fichiers et construire l'objet de réponse
+
+    for (const field in req.files) {
+      responseData[field] = req.files[field][0].filename;
+    }
+
+    // // Ajouter les autres champs du formulaire au body de la requête
+    req.body.carteGrise = responseData.carteGrise;
+    req.body.carteIdentite = responseData.carteIdentite;
+
+    return next();
+  };
+
+  return [uploadInfosClient.fields(uploadInfosClientFields), setRequestBody];
+};
